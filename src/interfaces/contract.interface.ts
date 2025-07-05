@@ -54,6 +54,7 @@
 // src/interfaces/contract.interface.ts
 
 // Interface for risks identified in the contract
+
 interface IRisk {
   risk: string;
   explanation: string;
