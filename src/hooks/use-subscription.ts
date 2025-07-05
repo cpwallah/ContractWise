@@ -63,5 +63,6 @@ export function useSubscription() {
     subscriptionError,
     loading,
     setLoading,
+    user,
   };
 }
