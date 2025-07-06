@@ -60,8 +60,11 @@ export function HomePage() {
     }
   };
     const handleGetStarted = () => {
-    router.push("http://localhost:3000/dashboard");
+    router.push("https://contract-wise-et6d.vercel.app/dashboard");
   };
+  const handleGetStartedd=()=>{
+    router.push("https://contract-wise-et6d.vercel.app/privacy");
+  }
   useEffect(() => {
     const handleMove = (x: number, y: number, section: HTMLDivElement | null) => {
       if (!section) return;
@@ -355,6 +358,7 @@ export function HomePage() {
                 className="inline-flex items-center justify-center text-base sm:text-lg md:text-xl border-2 border-[#E0E0E0]/70 bg-[#1A237E]/60 text-white shadow-lg hover:bg-[#FF6F61]/40 hover:shadow-[#E0E0E0]/50 transition-all duration-300 action-button w-full sm:w-auto"
                 size="lg"
                 aria-label="Learn more about contract analysis"
+                onClick={handleGetStartedd}
               >
                 Learn More
                 <ArrowRight className="ml-2 sm:ml-3 h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7" />
