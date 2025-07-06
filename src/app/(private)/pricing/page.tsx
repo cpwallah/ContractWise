@@ -90,7 +90,7 @@ function PricingSection() {
   };
 
   const handleGetStarted = () => {
-    router.push("http://localhost:3000/dashboard");
+    router.push("https://contract-wise-et6d.vercel.app/dashboard");
   };
 
   useEffect(() => {
