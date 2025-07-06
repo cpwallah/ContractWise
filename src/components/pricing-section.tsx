@@ -4,6 +4,7 @@ import stripePromise from "@/lib/stripe";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { useRef, useEffect } from "react";
+import Router from "next/router";
 
 export function PricingSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -19,6 +20,9 @@ export function PricingSection() {
     } catch (error) {
       console.log(error);
     }
+  };
+   const handleGetStarted = () => {
+    Router.push("https://contract-wise-et6d.vercel.app/dashboard");
   };
 
   useEffect(() => {
@@ -244,7 +248,7 @@ export function PricingSection() {
               "Basic contract summary",
             ]}
             buttonText="Get Started"
-            onButtonClick={() => {}}
+            onButtonClick={handleGetStarted}
             highlight={false}
           />
           <PricingCard
