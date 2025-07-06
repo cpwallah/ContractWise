@@ -1,6 +1,7 @@
 import axios from "axios";
 export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_CLIENT_URL || "http://localhost:8080",
+  // baseURL: process.env.NEXT_PUBLIC_CLIENT_URL || "http://localhost:8080",
+  baseURL: "https://contractwise-backend.onrender.com",
   withCredentials: true,
 });
 
