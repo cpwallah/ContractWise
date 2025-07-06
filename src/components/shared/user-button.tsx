@@ -19,7 +19,7 @@ import { useRouter } from "next/navigation";
 const CLIENT_URL = process.env.NEXT_PUBLIC_CLIENT_URL!;
 function googleSignIn():Promise<void>{
     return new Promise((resolve)=>{
-        window.location.href=`${CLIENT_URL}/auth/google`;
+        window.location.href=`${CLIENT_URL}/auth/google/callback`;
         resolve();
     })
 }
