@@ -4,11 +4,12 @@ import stripePromise from "@/lib/stripe";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { useRef, useEffect } from "react";
-import Router from "next/router";
-
+// import Router from "next/router";
+import { useRouter } from "next/navigation";
 export function PricingSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const mousePos = useRef({ x: 0, y: 0 });
+   const router = useRouter();
 
   const handleUpgrade = async () => {
     try {
@@ -22,7 +23,7 @@ export function PricingSection() {
     }
   };
    const handleGetStarted = () => {
-    Router.push("https://contract-wise-et6d.vercel.app/dashboard");
+    router.push("https://contract-wise-et6d.vercel.app/dashboard");
   };
 
   useEffect(() => {
