@@ -539,6 +539,7 @@ import { motion, AnimatePresence, Variants } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Header } from "../header";
 
 interface IRisk {
   risk: string;
@@ -642,18 +643,7 @@ export default function ContractAnalysisResults({
       <div className="w-full min-h-[calc(100vh-4rem)] bg-gradient-to-b from-blue-50 to-white overflow-y-auto">
         <header className="fixed top-0 left-0 w-full bg-white shadow-sm z-50">
           <div className="container mx-auto px-2 sm:px-4 lg:px-6 py-3 flex justify-between items-center">
-            <h1 className="text-lg sm:text-xl font-semibold text-gray-900">Contract Analysis</h1>
-            <nav className="flex space-x-2 sm:space-x-4">
-              <Link href="/dashboard" className="text-xs sm:text-sm text-gray-600 hover:text-blue-600">
-                Dashboard
-              </Link>
-              <Link href="/pricing" className="text-xs sm:text-sm text-gray-600 hover:text-blue-600">
-                Pricing
-              </Link>
-              <Link href="/privacy" className="text-xs sm:text-sm text-gray-600 hover:text-blue-600">
-                Privacy Policy
-              </Link>
-            </nav>
+           <Header/>
           </div>
         </header>
         <div className="container mx-auto px-2 sm:px-4 lg:px-6 py-16">
