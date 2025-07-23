@@ -509,7 +509,6 @@
 //   return response.data;
 // }
 
-
 import { api } from "@/lib/api";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { IContractAnalysis } from "@/interfaces/contract.interface";
@@ -582,11 +581,13 @@ export default function UserContracts() {
         contractId: contractToDelete,
         url: err.config?.url,
       });
-      alert(
-        err.response?.data?.error ||
-          err.message ||
-          "Failed to delete contract. Please check the console for details and verify the contract ID."
-      );
+      const errorMessage =
+        err.response?.status === 404
+          ? "Contract not found. It may have been deleted or you don't have access."
+          : err.response?.data?.error ||
+            err.message ||
+            "Failed to delete contract. Please try again or check the console for details.";
+      alert(errorMessage);
     },
   });
 
