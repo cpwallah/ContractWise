@@ -531,7 +531,6 @@
 // }
 
 
-
 "use client";
 
 import { useState, useMemo } from "react";
@@ -539,6 +538,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 interface IRisk {
   risk: string;
@@ -575,10 +575,10 @@ interface IContractAnalysisResultsProps {
   onUpgrade: () => void;
 }
 
-// Placeholder for OverallScoreChart (assuming it's a circular progress chart)
+// Placeholder for OverallScoreChart
 const OverallScoreChart = ({ overallScore }: { overallScore: number }) => {
   return (
-    <div className="relative w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40">
+    <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32">
       <svg className="w-full h-full" viewBox="0 0 100 100">
         <circle
           className="text-gray-200"
@@ -606,7 +606,7 @@ const OverallScoreChart = ({ overallScore }: { overallScore: number }) => {
           y="50"
           textAnchor="middle"
           dy=".3em"
-          className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900"
+          className="text-base sm:text-lg md:text-xl font-semibold text-gray-900"
         >
           {overallScore}
         </text>
@@ -622,7 +622,6 @@ export default function ContractAnalysisResults({
   onUpgrade,
 }: IContractAnalysisResultsProps) {
   const [activeSection, setActiveSection] = useState("summary");
-  const [isNavOpen, setIsNavOpen] = useState(false);
 
   const sections = ["summary", "risks", "opportunities", "details", "negotiation"];
 
@@ -638,29 +637,26 @@ export default function ContractAnalysisResults({
     exit: { scale: 1, opacity: 0, transition: { duration: 0.3 } },
   };
 
-  const navVariants: Variants = {
-    hidden: { opacity: 0, y: "-100%" },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.4,
-        when: "beforeChildren",
-        staggerChildren: 0.1,
-      },
-    },
-    exit: { opacity: 0, y: "-100%", transition: { duration: 0.4 } },
-  };
-
-  const navItemVariants: Variants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
-  };
-
   if (!analysisResults) {
     return (
       <div className="w-full min-h-[calc(100vh-4rem)] bg-gradient-to-b from-blue-50 to-white overflow-y-auto">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <header className="fixed top-0 left-0 w-full bg-white shadow-sm z-50">
+          <div className="container mx-auto px-2 sm:px-4 lg:px-6 py-3 flex justify-between items-center">
+            <h1 className="text-lg sm:text-xl font-semibold text-gray-900">Contract Analysis</h1>
+            <nav className="flex space-x-2 sm:space-x-4">
+              <Link href="/dashboard" className="text-xs sm:text-sm text-gray-600 hover:text-blue-600">
+                Dashboard
+              </Link>
+              <Link href="/pricing" className="text-xs sm:text-sm text-gray-600 hover:text-blue-600">
+                Pricing
+              </Link>
+              <Link href="/privacy" className="text-xs sm:text-sm text-gray-600 hover:text-blue-600">
+                Privacy Policy
+              </Link>
+            </nav>
+          </div>
+        </header>
+        <div className="container mx-auto px-2 sm:px-4 lg:px-6 py-16">
           <Card className="bg-white border border-blue-200 rounded-lg shadow-sm max-w-3xl mx-auto">
             <CardContent className="pt-6 pb-8">
               <p className="text-sm sm:text-base font-semibold text-gray-900">No analysis results available</p>
@@ -679,11 +675,11 @@ export default function ContractAnalysisResults({
 
   const scoreTrend = useMemo(() => {
     if (getScore > 70) {
-      return { icon: () => <svg className="w-5 h-5 sm:w-6 sm:h-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg>, color: "text-green-500", text: "Excellent" };
+      return { icon: () => <svg className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg>, color: "text-green-500", text: "Excellent" };
     } else if (getScore < 50 && getScore >= 0) {
-      return { icon: () => <svg className="w-5 h-5 sm:w-6 sm:h-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>, color: "text-red-500", text: "Critical" };
+      return { icon: () => <svg className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>, color: "text-red-500", text: "Critical" };
     } else {
-      return { icon: () => <svg className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 12H6" /></svg>, color: "text-yellow-500", text: "Stable" };
+      return { icon: () => <svg className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 12H6" /></svg>, color: "text-yellow-500", text: "Stable" };
     }
   }, [getScore]);
 
@@ -958,35 +954,36 @@ export default function ContractAnalysisResults({
   };
 
   return (
-    <div className="w-full min-h-[calc(100vh-4rem)] bg-gradient-to-b from-blue-50 to-white overflow-y-auto">
-      <div className="container mx-auto px-2 sm:px-4 lg:px-6 py-6">
-        <Button
-          variant="ghost"
-          className="sm:hidden fixed top-4 right-4 z-50 bg-white/90 text-gray-900 hover:bg-gray-100 rounded-lg p-2 shadow-md"
-          onClick={() => setIsNavOpen(!isNavOpen)}
-        >
-          {isNavOpen ? (
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          ) : (
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          )}
-        </Button>
+    <div className="w-full min-h-[calc(100vh-3rem)] bg-gradient-to-b from-blue-50 to-white overflow-y-auto">
+      <header className="fixed top-0 left-0 w-full bg-white shadow-sm z-50">
+        <div className="container mx-auto px-2 sm:px-4 lg:px-6 py-3 flex justify-between items-center">
+          <h1 className="text-lg sm:text-xl font-semibold text-gray-900">Contract Analysis</h1>
+          <nav className="flex space-x-2 sm:space-x-4">
+            <Link href="/dashboard" className="text-xs sm:text-sm text-gray-600 hover:text-blue-600">
+              Dashboard
+            </Link>
+            <Link href="/pricing" className="text-xs sm:text-sm text-gray-600 hover:text-blue-600">
+              Pricing
+            </Link>
+            <Link href="/privacy" className="text-xs sm:text-sm text-gray-600 hover:text-blue-600">
+              Privacy Policy
+            </Link>
+          </nav>
+        </div>
+      </header>
 
+      <div className="container mx-auto px-2 sm:px-4 lg:px-6 pt-14 sm:pt-16">
         <motion.nav
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="sticky top-16 z-20 bg-white/95 shadow-sm rounded-b-lg mb-4 mt-12 sm:mt-16 backdrop-blur-sm"
+          className="sticky top-12 sm:top-14 z-40 bg-white/95 shadow-sm rounded-b-lg mb-4 backdrop-blur-sm overflow-x-auto"
         >
-          <div className="hidden sm:flex flex-row gap-1 sm:gap-2 p-2 sm:p-3 max-w-7xl mx-auto flex-wrap">
+          <div className="flex flex-row gap-1 sm:gap-2 p-2 max-w-7xl mx-auto">
             {sections.map((section) => (
               <motion.div
                 key={section}
-                className="relative"
+                className="relative flex-shrink-0"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -998,7 +995,7 @@ export default function ContractAnalysisResults({
                 />
                 <Button
                   variant="ghost"
-                  className={`relative px-2 py-1 sm:px-3 sm:py-1.5 text-xs sm:text-sm font-medium text-gray-900 hover:bg-blue-100 rounded-md ${
+                  className={`relative px-2 py-1 sm:px-3 sm:py-1.5 text-xs sm:text-sm font-medium text-gray-900 hover:bg-blue-100 rounded-md whitespace-nowrap ${
                     activeSection === section ? "bg-blue-100 text-blue-800" : ""
                   }`}
                   onClick={() => setActiveSection(section)}
@@ -1009,47 +1006,6 @@ export default function ContractAnalysisResults({
             ))}
           </div>
         </motion.nav>
-
-        <AnimatePresence>
-          {isNavOpen && (
-            <motion.nav
-              variants={navVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              className="sm:hidden fixed top-16 left-0 w-full bg-white/95 shadow-lg z-40 p-4 mt-12 backdrop-blur-sm"
-            >
-              <div className="flex flex-col gap-2">
-                {sections.map((section) => (
-                  <motion.div
-                    key={section}
-                    variants={navItemVariants}
-                    className="relative"
-                  >
-                    <motion.div
-                      className="absolute inset-0 bg-blue-100 rounded-md"
-                      variants={pulseVariants}
-                      initial="initial"
-                      animate={activeSection === section ? "animate" : "initial"}
-                    />
-                    <Button
-                      variant="ghost"
-                      className={`w-full text-left px-3 py-1.5 text-sm font-medium text-gray-900 hover:bg-blue-100 rounded-md ${
-                        activeSection === section ? "bg-blue-100 text-blue-800" : ""
-                      }`}
-                      onClick={() => {
-                        setActiveSection(section);
-                        setIsNavOpen(false);
-                      }}
-                    >
-                      {section.charAt(0).toUpperCase() + section.slice(1)}
-                    </Button>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.nav>
-          )}
-        </AnimatePresence>
 
         <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6 pb-12 sm:pb-16">
           {activeSection === "summary" && (
