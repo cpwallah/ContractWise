@@ -376,6 +376,9 @@ export function PricingSection() {
   };
 
   useEffect(() => {
+    // Detect if the device is mobile based on user agent
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
     const handleMove = (x: number, y: number, targetElement: HTMLElement) => {
       if (!sectionRef.current) return;
       const rect = sectionRef.current.getBoundingClientRect();
@@ -464,42 +467,52 @@ export function PricingSection() {
     const cards = cardRefs.current;
     const buttons = buttonRefs.current;
 
+    // Only add mousemove and click for desktop, touchmove and touchstart for mobile
     headline?.addEventListener("mousemove", handleMouseMove);
-    headline?.addEventListener("touchmove", handleTouchMove, { passive: true });
     headline?.addEventListener("click", handleClick);
-    headline?.addEventListener("touchstart", handleClick);
+    if (isMobile) {
+      headline?.addEventListener("touchstart", handleClick);
+    } else {
+      headline?.addEventListener("touchmove", handleTouchMove, { passive: true });
+    }
 
     cards.forEach((card) => {
       card?.addEventListener("mousemove", handleMouseMove);
-      card?.addEventListener("touchmove", handleTouchMove, { passive: true });
       card?.addEventListener("click", handleClick);
-      card?.addEventListener("touchstart", handleClick);
+      if (isMobile) {
+        card?.addEventListener("touchstart", handleClick);
+      } else {
+        card?.addEventListener("touchmove", handleTouchMove, { passive: true });
+      }
     });
 
     buttons.forEach((button) => {
       button?.addEventListener("mousemove", handleMouseMove);
-      button?.addEventListener("touchmove", handleTouchMove, { passive: true });
       button?.addEventListener("click", handleClick);
-      button?.addEventListener("touchstart", handleClick);
+      if (isMobile) {
+        button?.addEventListener("touchstart", handleClick);
+      } else {
+        button?.addEventListener("touchmove", handleTouchMove, { passive: true });
+      }
     });
 
     return () => {
       headline?.removeEventListener("mousemove", handleMouseMove);
-      headline?.removeEventListener("touchmove", handleTouchMove);
       headline?.removeEventListener("click", handleClick);
+      headline?.removeEventListener("touchmove", handleTouchMove);
       headline?.removeEventListener("touchstart", handleClick);
 
       cards.forEach((card) => {
         card?.removeEventListener("mousemove", handleMouseMove);
-        card?.removeEventListener("touchmove", handleTouchMove);
         card?.removeEventListener("click", handleClick);
+        card?.removeEventListener("touchmove", handleTouchMove);
         card?.removeEventListener("touchstart", handleClick);
       });
 
       buttons.forEach((button) => {
         button?.removeEventListener("mousemove", handleMouseMove);
-        button?.removeEventListener("touchmove", handleTouchMove);
         button?.removeEventListener("click", handleClick);
+        button?.removeEventListener("touchmove", handleTouchMove);
         button?.removeEventListener("touchstart", handleClick);
       });
     };
