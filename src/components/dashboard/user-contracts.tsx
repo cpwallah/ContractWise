@@ -509,6 +509,8 @@
 //   return response.data;
 // }
 
+
+
 import { api } from "@/lib/api";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { IContractAnalysis } from "@/interfaces/contract.interface";
@@ -552,18 +554,34 @@ export default function UserContracts() {
   // Mutation for deleting a contract
   const deleteContractMutation = useMutation({
     mutationFn: async (contractId: string) => {
+      if (!contractId) {
+        throw new Error("Invalid contract ID");
+      }
+      console.log("Attempting to delete contract with ID:", contractId);
       const response = await api.delete(`/contracts/${contractId}`);
+      console.log("Delete response:", response);
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: (data, contractId) => {
+      console.log(`Successfully deleted contract ${contractId}`);
       queryClient.invalidateQueries({ queryKey: ["user-contracts"] });
+      queryClient.refetchQueries({ queryKey: ["user-contracts"] }); // Force refetch to ensure UI updates
       setIsDeleteDialogOpen(false);
       setContractToDelete(null);
       alert("Contract deleted successfully.");
     },
     onError: (err: any) => {
-      console.error("Failed to delete contract:", err);
-      alert(err.response?.data?.message || "Failed to delete contract. Please try again.");
+      console.error("Failed to delete contract:", {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status,
+        contractId: contractToDelete,
+      });
+      alert(
+        err.response?.data?.message ||
+          err.message ||
+          "Failed to delete contract. Please check the console for details and try again."
+      );
     },
   });
 
@@ -657,7 +675,9 @@ export default function UserContracts() {
             variant="outline"
             size="sm"
             onClick={() => {
-              setContractToDelete(row.getValue("_id"));
+              const contractId = row.getValue<string>("_id");
+              console.log("Selected contract ID for deletion:", contractId);
+              setContractToDelete(contractId);
               setIsDeleteDialogOpen(true);
             }}
             aria-label={`Delete contract ${row.getValue("_id")}`}
@@ -866,7 +886,9 @@ export default function UserContracts() {
                         variant="outline"
                         size="sm"
                         onClick={() => {
-                          setContractToDelete(row.getValue("_id"));
+                          const contractId = row.getValue<string>("_id");
+                          console.log("Selected contract ID for deletion:", contractId);
+                          setContractToDelete(contractId);
                           setIsDeleteDialogOpen(true);
                         }}
                         aria-label={`Delete contract ${row.getValue("_id")}`}
@@ -1036,5 +1058,6 @@ export default function UserContracts() {
 
 async function fetchUserContracts(): Promise<IContractAnalysis[]> {
   const response = await api.get("/contracts/user-contracts");
+  console.log("Fetched contracts:", response.data);
   return response.data;
 }
