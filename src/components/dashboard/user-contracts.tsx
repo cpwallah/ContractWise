@@ -510,7 +510,6 @@
 // }
 
 
-
 import { api } from "@/lib/api";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { IContractAnalysis } from "@/interfaces/contract.interface";
@@ -555,17 +554,22 @@ export default function UserContracts() {
   const deleteContractMutation = useMutation({
     mutationFn: async (contractId: string) => {
       if (!contractId) {
-        throw new Error("Invalid contract ID");
+        throw new Error("Invalid contract ID: ID is empty or undefined");
       }
       console.log("Attempting to delete contract with ID:", contractId);
+      console.log("DELETE request URL:", `/contracts/${contractId}`);
       const response = await api.delete(`/contracts/${contractId}`);
-      console.log("Delete response:", response);
+      console.log("Delete response:", {
+        status: response.status,
+        data: response.data,
+        headers: response.headers,
+      });
       return response.data;
     },
     onSuccess: (data, contractId) => {
       console.log(`Successfully deleted contract ${contractId}`);
-      queryClient.invalidateQueries({ queryKey: ["user-contracts"] });
-      queryClient.refetchQueries({ queryKey: ["user-contracts"] }); // Force refetch to ensure UI updates
+      queryClient.invalidateQueries({ queryKey: ["user-contracts"], exact: true });
+      queryClient.refetchQueries({ queryKey: ["user-contracts"] });
       setIsDeleteDialogOpen(false);
       setContractToDelete(null);
       alert("Contract deleted successfully.");
@@ -576,11 +580,12 @@ export default function UserContracts() {
         response: err.response?.data,
         status: err.response?.status,
         contractId: contractToDelete,
+        url: err.config?.url,
       });
       alert(
-        err.response?.data?.message ||
+        err.response?.data?.error ||
           err.message ||
-          "Failed to delete contract. Please check the console for details and try again."
+          "Failed to delete contract. Please check the console for details and verify the contract ID."
       );
     },
   });
