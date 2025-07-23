@@ -640,7 +640,7 @@ export default function ContractAnalysisResults({
   if (!analysisResults) {
     return (
       <div className="w-full min-h-[calc(100vh-4rem)] bg-gradient-to-b from-blue-50 to-white overflow-y-auto">
-        <Header  />
+        {/* <Header  /> */}
         <div className="container mx-auto px-2 sm:px-4 lg:px-6 pt-16 sm:pt-20">
           <Card className="bg-white border border-blue-200 rounded-lg shadow-sm max-w-3xl mx-auto">
             <CardContent className="pt-6 pb-8">
