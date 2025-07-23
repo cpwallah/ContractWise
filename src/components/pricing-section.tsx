@@ -373,7 +373,7 @@ export function PricingSection() {
   };
 
   useEffect(() => {
-    const handleMove = (x: number, y: number) => {
+    const handleMove = (x: number, y: number, targetElement: HTMLElement) => {
       if (!sectionRef.current) return;
       const rect = sectionRef.current.getBoundingClientRect();
       const centerX = rect.width / 2;
@@ -383,39 +383,45 @@ export function PricingSection() {
       const rotateX = mouseY * 0.03;
       const rotateY = mouseX * -0.03;
 
-      // Apply to headline
+      // Apply to headline only if the target is the headline or its children
       const headline = sectionRef.current.querySelector(".pricing-title");
-      if (headline) {
+      if (headline && headline.contains(targetElement)) {
         (headline as HTMLElement).style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(30px)`;
       }
 
-      // Apply to buttons
+      // Apply to buttons only if the target is a button
       const buttons = sectionRef.current.querySelectorAll("button");
       buttons.forEach((button) => {
-        (button as HTMLElement).style.transform = `perspective(600px) rotateX(${rotateX / 2}deg) rotateY(${rotateY / 2}deg) scale(${1 + Math.abs(mouseX) / 2000})`;
+        if (button.contains(targetElement)) {
+          (button as HTMLElement).style.transform = `perspective(600px) rotateX(${rotateX / 2}deg) rotateY(${rotateY / 2}deg) scale(${1 + Math.abs(mouseX) / 2000})`;
+        }
       });
 
-      // Apply to cards
+      // Apply to cards only if the target is a card
       const cards = sectionRef.current.querySelectorAll(".card");
       cards.forEach((card, index) => {
-        const offset = index % 2 === 0 ? 1 : -1;
-        (card as HTMLElement).style.transform = `perspective(800px) rotateX(${rotateX / 3}deg) rotateY(${rotateY / 3}deg) translateZ(${15 + offset * 5}px)`;
+        if (card.contains(targetElement)) {
+          const offset = index % 2 === 0 ? 1 : -1;
+          (card as HTMLElement).style.transform = `perspective(800px) rotateX(${rotateX / 3}deg) rotateY(${rotateY / 3}deg) translateZ(${15 + offset * 5}px)`;
+        }
       });
 
-      // Apply to background particles
+      // Apply to background particles only if the target is within the section
       const particles = sectionRef.current.querySelectorAll(".particle");
       particles.forEach((particle) => {
-        const p = particle as HTMLElement;
-        const dx = (mouseX - (parseFloat(p.style.left) || 50)) * 0.015;
-        const dy = (mouseY - (parseFloat(p.style.top) || 50)) * 0.015;
-        const speed = Math.sqrt(dx * dx + dy * dy) * 0.01;
-        p.style.transform = `translate(${dx}px, ${dy}px) scale(${1 + speed * 1.5}) rotate(${mouseX * 0.05}deg)`;
-        p.style.opacity = `${0.5 + speed * 0.5}`;
+        if (sectionRef.current?.contains(targetElement)) {
+          const p = particle as HTMLElement;
+          const dx = (mouseX - (parseFloat(p.style.left) || 50)) * 0.015;
+          const dy = (mouseY - (parseFloat(p.style.top) || 50)) * 0.015;
+          const speed = Math.sqrt(dx * dx + dy * dy) * 0.01;
+          p.style.transform = `translate(${dx}px, ${dy}px) scale(${1 + speed * 1.5}) rotate(${mouseX * 0.05}deg)`;
+          p.style.opacity = `${0.5 + speed * 0.5}`;
+        }
       });
 
-      // Apply to background wave
+      // Apply to background wave only if the target is within the section
       const wave = sectionRef.current.querySelector(".wave-effect");
-      if (wave) {
+      if (wave && sectionRef.current?.contains(targetElement)) {
         (wave as HTMLElement).style.transform = `translate(${mouseX * 0.1}px, ${mouseY * 0.1}px)`;
         (wave as HTMLElement).style.opacity = `${0.3 + Math.abs(mouseX) * 0.001}`;
       }
@@ -424,7 +430,7 @@ export function PricingSection() {
     const handleClick = (e: MouseEvent | TouchEvent) => {
       if (!sectionRef.current) return;
       const target = e.target as HTMLElement;
-      // Only trigger click effects if the target is within the pricing section
+      // Only trigger ripple effect if the target is within the pricing section
       if (sectionRef.current.contains(target)) {
         const rect = sectionRef.current.getBoundingClientRect();
         const clickX = (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX) - rect.left;
@@ -441,7 +447,7 @@ export function PricingSection() {
     };
 
     const handleMouseMove = (e: MouseEvent) => {
-      handleMove(e.clientX, e.clientY);
+      handleMove(e.clientX, e.clientY, e.target as HTMLElement);
       mousePos.current = { x: e.clientX, y: e.clientY };
     };
 
@@ -451,7 +457,7 @@ export function PricingSection() {
         const target = e.target as HTMLElement;
         // Only apply effects if the touch is within the pricing section
         if (sectionRef.current?.contains(target)) {
-          handleMove(touch.clientX, touch.clientY);
+          handleMove(touch.clientX, touch.clientY, target);
           mousePos.current = { x: touch.clientX, y: touch.clientY };
         }
       }
