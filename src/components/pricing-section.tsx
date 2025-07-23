@@ -353,6 +353,9 @@ import { useRouter } from "next/navigation";
 
 export function PricingSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const mousePos = useRef({ x: 0, y: 0 });
   const router = useRouter();
 
@@ -383,30 +386,27 @@ export function PricingSection() {
       const rotateX = mouseY * 0.03;
       const rotateY = mouseX * -0.03;
 
-      // Apply to headline only if the target is the headline or its children
-      const headline = sectionRef.current.querySelector(".pricing-title");
-      if (headline && headline.contains(targetElement)) {
-        (headline as HTMLElement).style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(30px)`;
+      // Apply to headline
+      if (headlineRef.current && headlineRef.current.contains(targetElement)) {
+        headlineRef.current.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(30px)`;
       }
 
-      // Apply to buttons only if the target is a button
-      const buttons = sectionRef.current.querySelectorAll("button");
-      buttons.forEach((button) => {
-        if (button.contains(targetElement)) {
-          (button as HTMLElement).style.transform = `perspective(600px) rotateX(${rotateX / 2}deg) rotateY(${rotateY / 2}deg) scale(${1 + Math.abs(mouseX) / 2000})`;
+      // Apply to buttons
+      buttonRefs.current.forEach((button) => {
+        if (button && button.contains(targetElement)) {
+          button.style.transform = `perspective(600px) rotateX(${rotateX / 2}deg) rotateY(${rotateY / 2}deg) scale(${1 + Math.abs(mouseX) / 2000})`;
         }
       });
 
-      // Apply to cards only if the target is a card
-      const cards = sectionRef.current.querySelectorAll(".card");
-      cards.forEach((card, index) => {
-        if (card.contains(targetElement)) {
+      // Apply to cards
+      cardRefs.current.forEach((card, index) => {
+        if (card && card.contains(targetElement)) {
           const offset = index % 2 === 0 ? 1 : -1;
-          (card as HTMLElement).style.transform = `perspective(800px) rotateX(${rotateX / 3}deg) rotateY(${rotateY / 3}deg) translateZ(${15 + offset * 5}px)`;
+          card.style.transform = `perspective(800px) rotateX(${rotateX / 3}deg) rotateY(${rotateY / 3}deg) translateZ(${15 + offset * 5}px)`;
         }
       });
 
-      // Apply to background particles only if the target is within the section
+      // Apply to background particles
       const particles = sectionRef.current.querySelectorAll(".particle");
       particles.forEach((particle) => {
         if (sectionRef.current?.contains(targetElement)) {
@@ -419,7 +419,7 @@ export function PricingSection() {
         }
       });
 
-      // Apply to background wave only if the target is within the section
+      // Apply to background wave
       const wave = sectionRef.current.querySelector(".wave-effect");
       if (wave && sectionRef.current?.contains(targetElement)) {
         (wave as HTMLElement).style.transform = `translate(${mouseX * 0.1}px, ${mouseY * 0.1}px)`;
@@ -455,24 +455,53 @@ export function PricingSection() {
       if (e.touches.length > 0) {
         const touch = e.touches[0];
         const target = e.target as HTMLElement;
-        // Only apply effects if the touch is within the pricing section
-        if (sectionRef.current?.contains(target)) {
-          handleMove(touch.clientX, touch.clientY, target);
-          mousePos.current = { x: touch.clientX, y: touch.clientY };
-        }
+        handleMove(touch.clientX, touch.clientY, target);
       }
     };
 
-    const section = sectionRef.current;
-    section?.addEventListener("mousemove", handleMouseMove);
-    section?.addEventListener("touchmove", handleTouchMove, { passive: true });
-    section?.addEventListener("click", handleClick);
-    section?.addEventListener("touchstart", handleClick);
+    // Add event listeners to specific interactive elements
+    const headline = headlineRef.current;
+    const cards = cardRefs.current;
+    const buttons = buttonRefs.current;
+
+    headline?.addEventListener("mousemove", handleMouseMove);
+    headline?.addEventListener("touchmove", handleTouchMove, { passive: true });
+    headline?.addEventListener("click", handleClick);
+    headline?.addEventListener("touchstart", handleClick);
+
+    cards.forEach((card) => {
+      card?.addEventListener("mousemove", handleMouseMove);
+      card?.addEventListener("touchmove", handleTouchMove, { passive: true });
+      card?.addEventListener("click", handleClick);
+      card?.addEventListener("touchstart", handleClick);
+    });
+
+    buttons.forEach((button) => {
+      button?.addEventListener("mousemove", handleMouseMove);
+      button?.addEventListener("touchmove", handleTouchMove, { passive: true });
+      button?.addEventListener("click", handleClick);
+      button?.addEventListener("touchstart", handleClick);
+    });
+
     return () => {
-      section?.removeEventListener("mousemove", handleMouseMove);
-      section?.removeEventListener("touchmove", handleTouchMove);
-      section?.removeEventListener("click", handleClick);
-      section?.removeEventListener("touchstart", handleClick);
+      headline?.removeEventListener("mousemove", handleMouseMove);
+      headline?.removeEventListener("touchmove", handleTouchMove);
+      headline?.removeEventListener("click", handleClick);
+      headline?.removeEventListener("touchstart", handleClick);
+
+      cards.forEach((card) => {
+        card?.removeEventListener("mousemove", handleMouseMove);
+        card?.removeEventListener("touchmove", handleTouchMove);
+        card?.removeEventListener("click", handleClick);
+        card?.removeEventListener("touchstart", handleClick);
+      });
+
+      buttons.forEach((button) => {
+        button?.removeEventListener("mousemove", handleMouseMove);
+        button?.removeEventListener("touchmove", handleTouchMove);
+        button?.removeEventListener("click", handleClick);
+        button?.removeEventListener("touchstart", handleClick);
+      });
     };
   }, []);
 
@@ -590,7 +619,7 @@ export function PricingSection() {
         `}</style>
       </div>
       <div className="container px-4 sm:px-6 md:px-8 lg:px-12 max-w-full sm:max-w-7xl mx-auto flex flex-col items-center relative z-20">
-        <h2 className="text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-[#E0E0E0] to-[#FF6F61] mb-6 sm:mb-8 md:mb-10 drop-shadow-2xl pricing-title text-center">
+        <h2 ref={headlineRef} className="text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-[#E0E0E0] to-[#FF6F61] mb-6 sm:mb-8 md:mb-10 drop-shadow-2xl pricing-title text-center">
           Choose Your Plan
         </h2>
         <p className="text-base xs:text-lg sm:text-xl md:text-2xl text-gray-200 max-w-full sm:max-w-2xl md:max-w-3xl mx-auto mb-8 sm:mb-10 md:mb-12 leading-relaxed drop-shadow-md subtext text-center">
@@ -611,6 +640,8 @@ export function PricingSection() {
             buttonText="Get Started"
             onButtonClick={handleGetStarted}
             highlight={false}
+            cardRef={(el) => (cardRefs.current[0] = el)}
+            buttonRef={(el) => (buttonRefs.current[0] = el)}
           />
           <PricingCard
             title="Premium"
@@ -632,6 +663,8 @@ export function PricingSection() {
             buttonText="Upgrade"
             onButtonClick={handleUpgrade}
             highlight={true}
+            cardRef={(el) => (cardRefs.current[1] = el)}
+            buttonRef={(el) => (buttonRefs.current[1] = el)}
           />
         </div>
       </div>
@@ -648,6 +681,8 @@ interface PricingCardProps {
   buttonText: string;
   highlight?: boolean;
   onButtonClick: () => void;
+  cardRef?: (el: HTMLDivElement | null) => void;
+  buttonRef?: (el: HTMLButtonElement | null) => void;
 }
 
 function PricingCard({
@@ -659,9 +694,12 @@ function PricingCard({
   buttonText,
   onButtonClick,
   highlight = false,
+  cardRef,
+  buttonRef,
 }: PricingCardProps) {
   return (
     <Card
+      ref={cardRef}
       className={`h-full border-2 border-[#E0E0E0]/50 bg-[#1A237E]/40 backdrop-blur-md shadow-xl rounded-lg sm:rounded-xl transition-all duration-500 card ${
         highlight ? "ring-2 ring-[#FF6F61]/50" : ""
       }`}
@@ -689,6 +727,7 @@ function PricingCard({
           ))}
         </ul>
         <Button
+          ref={buttonRef}
           className="inline-flex items-center justify-center text-base sm:text-lg md:text-xl bg-gradient-to-r from-[#1A237E] to-[#FF6F61] text-white shadow-lg hover:from-[#E0E0E0]/10 hover:to-[#FF6F61] hover:shadow-[#1A237E]/50 transition-all duration-300 action-button w-full sm:w-auto mt-4 sm:mt-6"
           size="lg"
           onClick={onButtonClick}
