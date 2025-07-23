@@ -939,7 +939,7 @@ export default function ContractAnalysisResults({
 
   return (
     <div className="w-full min-h-[calc(100vh-4rem)] bg-gradient-to-b from-blue-50 to-white overflow-y-auto">
-      <Header />
+      {/* <Header /> */}
       <div className="container mx-auto px-2 sm:px-4 lg:px-6 pt-16 sm:pt-20">
         <motion.nav
           initial={{ opacity: 0, y: -20 }}
